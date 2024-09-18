@@ -8,29 +8,30 @@ import {
   Box,
   Select,
   MenuItem,
-  TextField,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useTaskManager } from "../context/TaskManagerContext";
-import backgroundImage from "../assets/Images/task3.jpeg";
 import DataTable from "react-data-table-component";
 import ConfirmDeleteDialog from "./DeleteDialog";
 
 const TaskList = () => {
-  const { tasks, dispatch, toggleShowForm, setEditingTask, clearEditingTask } =
-    useTaskManager();
-
+  const { tasks, dispatch, toggleShowForm, setEditingTask } = useTaskManager();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const handleEdit = (task) => {
     setEditingTask(task);
   };
+
   const handleDelete = (taskId) => {
     setTaskToDelete(taskId);
     setDialogOpen(true);
   };
+
   const handleStatusChange = (row, newStatus) => {
     dispatch({
       type: "UPDATE_TASK",
@@ -44,6 +45,7 @@ const TaskList = () => {
       },
     });
   };
+
   const confirmDelete = () => {
     if (taskToDelete) {
       dispatch({
@@ -52,6 +54,12 @@ const TaskList = () => {
       });
     }
   };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (filterStatus === "Completed") return task.completed;
+    if (filterStatus === "Incomplete") return !task.completed;
+    return true;
+  });
 
   const columns = [
     {
@@ -79,7 +87,6 @@ const TaskList = () => {
         </Select>
       ),
     },
-
     {
       name: "Action",
       cell: (row) => (
@@ -117,13 +124,13 @@ const TaskList = () => {
         backgroundColor: "#5773ff",
         fontSize: "14px",
         color: "white",
-        paddingLeft: "16px", // override the cell padding for data cells
+        paddingLeft: "16px",
         paddingRight: "auto",
       },
     },
     cells: {
       style: {
-        paddingLeft: "2px", // override the cell padding for data cells
+        paddingLeft: "2px",
         paddingRight: "2px",
         pointer: "cursor",
         justifyContent: "center",
@@ -133,20 +140,10 @@ const TaskList = () => {
   };
   return (
     <Grid container height="100vh">
-      {/* Image Section */}
-      <Grid item md={3} height="100%" display={{ xs: "none", md: "none" }}>
-        <img
-          src={backgroundImage}
-          alt="task background"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </Grid>
-
-      {/* Task List Section */}
       <Grid item xs={12} px="4rem" mt="2rem">
         <Stack spacing={2}>
           <Stack
-            direction="row"
+            direction={{ xs: "column", md: "row" }}
             alignItems="center"
             justifyContent="space-between"
           >
@@ -168,7 +165,24 @@ const TaskList = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <TextField label="Filter By status" sx={{ mr: "20px" }} />
+              <FormControl
+                variant="outlined"
+                sx={{ minWidth: 200, mr: "20px" }}
+              >
+                <InputLabel id="status-select-label">
+                  Filter By Task Status
+                </InputLabel>
+                <Select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  sx={{ mr: "20px", width: "150px" }}
+                  label="search by status"
+                >
+                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="Incomplete">Incomplete</MenuItem>
+                  <MenuItem value="Completed">Completed</MenuItem>
+                </Select>
+              </FormControl>
               <Button
                 variant="contained"
                 onClick={toggleShowForm}
@@ -178,7 +192,7 @@ const TaskList = () => {
               </Button>
             </Stack>
           </Stack>
-          {tasks?.length === 0 ? (
+          {filteredTasks.length === 0 ? (
             <Box
               sx={{
                 alignItems: "center",
@@ -192,8 +206,8 @@ const TaskList = () => {
             <>
               <DataTable
                 columns={columns}
+                data={filteredTasks}
                 customStyles={customStyles}
-                data={tasks}
               />
               <ConfirmDeleteDialog
                 open={dialogOpen}

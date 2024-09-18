@@ -7,6 +7,7 @@ export const TOGGLE_COMPLETED = "TOGGLE_COMPLETED";
 export const TOGGLE_SHOW_FORM = "TOGGLE_SHOW_FORM";
 export const SET_EDITING_TASK = "SET_EDITING_TASK";
 export const CLEAR_EDITING_TASK = "CLEAR_EDITING_TASK";
+export const SET_TASKS = "SET_TASKS";
 
 // State keys
 export const TASKS = "tasks";

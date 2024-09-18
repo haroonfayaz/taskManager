@@ -38,7 +38,6 @@ const TaskForm = () => {
 
   const onSubmit = (values, form) => {
     if (editingTask) {
-      // Update the existing task
       const updatedTask = {
         ...editingTask,
         title: values.title,
@@ -50,7 +49,6 @@ const TaskForm = () => {
         payload: { updatedTask },
       });
     } else {
-      // Create a new task
       const taskId = Date.now().toString();
       const newTask = {
         id: taskId,
@@ -64,12 +62,8 @@ const TaskForm = () => {
         payload: { task: newTask },
       });
     }
-
-    // Reset the form fields
     form.reset();
-    // Close the form
     toggleShowForm();
-    // Clear the editing task if it was set
     clearEditingTask();
   };
 
@@ -87,18 +81,12 @@ const TaskForm = () => {
           </Grid>
 
           <Grid item md={6} height="100vh" px="4rem" mt="6rem">
-            <Button
-              variant="contained"
-              sx={{ float: "right", mt: "10px" }}
-              onClick={() => {
-                toggleShowForm();
-                clearEditingTask();
-              }}
+            <Divider />
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
             >
-              Back
-            </Button>
-            <Stack>
-              <Divider />
               <Typography
                 sx={{
                   color: "#270082",
@@ -111,6 +99,16 @@ const TaskForm = () => {
               >
                 {editingTask ? "Edit Task" : "Create Tasks Here"}
               </Typography>
+              <Button
+                variant="contained"
+                sx={{ float: "right", mt: "10px" }}
+                onClick={() => {
+                  toggleShowForm();
+                  clearEditingTask();
+                }}
+              >
+                Back
+              </Button>
             </Stack>
             <Form
               initialValues={formValues}

@@ -10,9 +10,9 @@ import {
   TOGGLE_SHOW_FORM,
   SET_EDITING_TASK,
   CLEAR_EDITING_TASK,
+  SET_TASKS,
 } from "../constants/taskManagerConstants";
 
-// Initial state
 const initialState = {
   [TASKS]: [],
   [FILTER]: "all",
@@ -20,7 +20,6 @@ const initialState = {
   editingTask: null,
 };
 
-// Reducer function
 const reducer = (state, action) => {
   switch (action.type) {
     case ADD_TASK: {
@@ -32,7 +31,6 @@ const reducer = (state, action) => {
         [TASKS]: updatedTasks,
       };
     }
-
     case REMOVE_TASK: {
       const { taskId } = action.payload;
       const updatedTasks = state[TASKS].filter((task) => task.id !== taskId);
@@ -42,7 +40,6 @@ const reducer = (state, action) => {
         [TASKS]: updatedTasks,
       };
     }
-
     case UPDATE_TASK: {
       const { updatedTask } = action.payload;
       const updatedTasks = state[TASKS].map((task) =>
@@ -54,7 +51,13 @@ const reducer = (state, action) => {
         [TASKS]: updatedTasks,
       };
     }
-
+    case SET_TASKS: {
+      const { tasks } = action.payload;
+      return {
+        ...state,
+        [TASKS]: tasks,
+      };
+    }
     case SET_FILTER: {
       const { filter } = action.payload;
       localStorage.setItem(FILTER, filter);
@@ -63,7 +66,6 @@ const reducer = (state, action) => {
         [FILTER]: filter,
       };
     }
-
     case TOGGLE_COMPLETED: {
       const { taskId } = action.payload;
       const updatedTasks = state[TASKS].map((task) =>
@@ -75,7 +77,6 @@ const reducer = (state, action) => {
         [TASKS]: updatedTasks,
       };
     }
-
     case TOGGLE_SHOW_FORM: {
       return {
         ...state,
@@ -88,14 +89,12 @@ const reducer = (state, action) => {
         editingTask: action.payload.task,
       };
     }
-
     case CLEAR_EDITING_TASK: {
       return {
         ...state,
         editingTask: null,
       };
     }
-
     default:
       return state;
   }
@@ -115,7 +114,7 @@ export const TaskManagerProvider = ({ children }) => {
 
       if (savedTasks) {
         dispatch({
-          type: "SET_TASKS",
+          type: SET_TASKS,
           payload: {
             tasks: JSON.parse(savedTasks),
           },
@@ -139,9 +138,10 @@ export const TaskManagerProvider = ({ children }) => {
       type: TOGGLE_SHOW_FORM,
     });
   };
+
   const setEditingTask = (task) => {
     dispatch({
-      type: "SET_EDITING_TASK",
+      type: SET_EDITING_TASK,
       payload: { task },
     });
     toggleShowForm();
@@ -149,9 +149,10 @@ export const TaskManagerProvider = ({ children }) => {
 
   const clearEditingTask = () => {
     dispatch({
-      type: "CLEAR_EDITING_TASK",
+      type: CLEAR_EDITING_TASK,
     });
   };
+
   return (
     <TaskManagerContext.Provider
       value={{
