@@ -94,7 +94,7 @@ const TaskList = () => {
           <IconButton
             variant="contained"
             color="secondary"
-            onClick={() => handleEdit(row.id)}
+            onClick={() => handleEdit(row)}
           >
             <EditIcon color="primary" />
           </IconButton>
